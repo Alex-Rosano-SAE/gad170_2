@@ -12,19 +12,21 @@ using UnityEngine;
 /// </summary>
 public class Character : MonoBehaviour
 {
+    public CharacterName charName;
+
     [Range(0.0f,1.0f)]
     public float mojoRemaining = 1;
 
+    [Header("Stats")]
     public int availablePoints = 10;
 
     public int level;
     public int xp;
     public int style, luck, rhythm;
 
-    public CharacterName charName;
 
+    [Header("Related objects")]
     public DanceTeam myTeam;
-
 
     public bool isSelected;
 
@@ -39,13 +41,8 @@ public class Character : MonoBehaviour
 
     public void InitialStats()
     {
-        // TODO - First
-        level = 1;
-        style = Random.Range(2, 4);
-        availablePoints -= style;
-        rhythm = Random.Range(2, 4);
-        availablePoints -= rhythm;
-        luck = availablePoints;
+        // TODO - First, you can
+        Debug.LogWarning("InitialStats called, needs to distribute points into stats. This should be able to be ported from previous brief work");
     }
 
     public void AssignName(CharacterName characterName)
