@@ -8,8 +8,8 @@ using UnityEngine;
 /// TODO:
 ///     Needs to generate the number of requested <b>unique</b> character names for the dancers in our battle
 /// </summary>
-[CreateAssetMenu(menuName = "Battle Objects/Character Name Generator")]
-[System.Serializable]
+//[CreateAssetMenu(menuName = "Battle Objects/Character Name Generator")]
+//[System.Serializable]
 public class CharacterNameGenerator : ScriptableObject
 {
     [Header("Possible first names")]
@@ -29,14 +29,17 @@ public class CharacterNameGenerator : ScriptableObject
     {
         CharacterName[] names = new CharacterName[namesNeeded];
 
-        //TODO - filling this with empty names so the rest of our code is safe to run without need for many null checks
-        CharacterName emptyName = new CharacterName(string.Empty, string.Empty, string.Empty, string.Empty);
-        for (int i = 0; i < names.Length; i++)
+        for (int i = 0; i < namesNeeded; i++)
         {
-            names[i] = emptyName;
-        }
+            string first = firstNames[Random.Range(0, firstNames.Count)];
+            string last = lastNames[Random.Range(0, lastNames.Count)];
+            last.Remove;
+            object p = Debug.Log(last);
+            string nick = nicknames[Random.Range(0, nicknames.Count)];
+            string des = descriptors[Random.Range(0, descriptors.Count)];
 
-        Debug.LogWarning("CharacterNameGenerator called, it needs to fill out the names array with unique randomly constructed character names");
+            names[i] = new CharacterName(first, last, nick, des);
+        }
 
         return names;
     }

@@ -34,42 +34,44 @@ public class BattleSystem : MonoBehaviour
 
     void RoundRequested()
     {
-        //calling the coroutine so we can put waits in for anims to play
         StartCoroutine(DoRound());
-    }
-
-    IEnumerator DoRound()
-    {
-        yield return new WaitForSeconds(battlePrepTime);
-
-        //checking for no dancers on either team
-        if(TeamA.allDancers.Count == 0 && TeamB.allDancers.Count == 0)
-        {
-            Debug.LogWarning("DoRound called, but there are no dancers on either team. DanceTeamInit needs to be completed");
-
-        }
-        else if (TeamA.activeDancers.Count > 0 && TeamB.activeDancers.Count > 0)
-        {
-            Debug.LogWarning("DoRound called, it needs to select a dancer from each team to dance off and put in the FightEventData below");
-            //GameEvents.RequestFight(new FightEventData(a, b));
-        }
-        else
-        {
-            //GameEvents.BattleFinished(winner);
-            //winner.EnableWinEffects();
-
-            //log it battlelog also
-            Debug.Log("DoRound called, but we have a winner so Game Over");
-        }
     }
 
     void FightOver(FightResultData data)
     {
-        Debug.LogWarning("FightOver called, may need to check for winners and/or notify teams of zero mojo dancers");
+        //check for winner
+        if (data.outcome != 0)
+        {
+            data.winner.myTeam.EnableWinEffects();
 
-        //defaulting to starting a new round to ease development
-        //calling the coroutine so we can put waits in for anims to play
+            data.defeated.myTeam.RemoveFromActive(data.defeated);
+        }
+
+        //if none
         StartCoroutine(HandleFightOver());
+    }
+    
+    IEnumerator DoRound()
+    {
+        //Tell fight manager to attack? Or just listen for outcomes?
+        yield return new WaitForSeconds(battlePrepTime);
+
+        if(TeamA.activeDancers.Count > 0 && TeamB.activeDancers.Count > 0)
+        {
+            Character a = TeamA.activeDancers[Random.Range(0, TeamA.activeDancers.Count)];
+            Character b = TeamB.activeDancers[Random.Range(0, TeamB.activeDancers.Count)];
+            GameEvents.RequestFight(new FightEventData(a, b));
+        }
+        else
+        {
+            var winner = TeamA.activeDancers.Count > 0 ? TeamA : TeamB;
+            GameEvents.BattleFinished(winner);
+
+            winner.EnableWinEffects();
+
+            //log it battlelog also
+            Debug.Log("Game Over");
+        }
     }
 
     IEnumerator HandleFightOver()
@@ -77,7 +79,6 @@ public class BattleSystem : MonoBehaviour
         yield return new WaitForSeconds(fightWinTime);
         TeamA.DisableWinEffects();
         TeamB.DisableWinEffects();
-        Debug.LogWarning("HandleFightOver called, may need to prepare or clean dancers or teams and checks before doing GameEvents.RequestFighters()");
-        //GameEvents.RequestFighters();
+        GameEvents.RequestFighters();
     }
 }
